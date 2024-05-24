@@ -1,9 +1,11 @@
 import { useState } from "react";
 import "./index.css";
+import Cookies from 'js-cookie'
 
 const AdminLogin = (props) => {
-  const { username, setUsername } = useState("");
-  const { password, setPassword } = useState("");
+  const [ username, setUsername ] = useState("");
+  const [ password, setPassword ] = useState("");
+  const [error,setError]=useState('')
   const onChangeUsername = (event) => {
     setUsername(event.target.value);
   };
@@ -20,8 +22,17 @@ const AdminLogin = (props) => {
       method: "POST",
       body: JSON.stringify(userDetails),
     };
-    const url = "";
+    const url = "https://web-app-2ffv.onrender.com/admin-login";
     const response = await fetch(url, options);
+    const data=await response.json();
+    if (response.ok){
+      const {jwtToken}=data;
+      Cookies.set('jwt-token',jwtToken)
+      props.history.replace('/admin-edit-details')
+    }
+    else{
+      setError(data)
+    }
   };
 
   const signupLink=()=>{
@@ -57,6 +68,7 @@ const AdminLogin = (props) => {
               onChange={onChangePassword}
             />
           </div>
+          <p>{error}</p>
           <p className="forgot-password">forgot password?</p>
           <div className="buttons-group">
             <button type="submit" className="login-button">

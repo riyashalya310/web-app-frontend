@@ -1,10 +1,12 @@
 import { useState } from "react";
 import "./index.css";
 import image from '../../images/images (1).png'
+import Cookies from "js-cookie";
 
 const StudentLogin = (props) => {
-  const { username, setUsername } = useState("");
-  const { password, setPassword } = useState("");
+  const [username, setUsername ] = useState("");
+  const [ password, setPassword ] = useState("");
+  const [error,setError]=useState("")
   const onChangeUsername = (event) => {
     setUsername(event.target.value);
   };
@@ -21,8 +23,17 @@ const StudentLogin = (props) => {
       method: "POST",
       body: JSON.stringify(userDetails),
     };
-    const url = "";
+    const url = "https://web-app-2ffv.onrender.com/student-login";
     const response = await fetch(url, options);
+    const data=await response.json();
+    if (response.ok){
+      const {jwtToken}=data;
+      Cookies.set('jwt-token',jwtToken)
+      props.history.replace('/student-profile')
+    }
+    else{
+      setError(data)
+    }
   };
 
   const signupLink=()=>{
@@ -58,6 +69,7 @@ const StudentLogin = (props) => {
               onChange={onChangePassword}
             />
           </div>
+          <p>{error}</p>
           <p className="forgot-password">forgot password?</p>
           <div className="buttons-group">
             <button type="submit" className="login-button">
