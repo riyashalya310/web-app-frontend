@@ -21,13 +21,16 @@ const AdminLogin = (props) => {
     const options = {
       method: "POST",
       body: JSON.stringify(userDetails),
+      headers: {
+        "Content-Type": "application/json"
+      }
     };
     const url = "https://web-app-2ffv.onrender.com/admin-login";
     const response = await fetch(url, options);
     const data=await response.json();
     if (response.ok){
       const {jwtToken}=data;
-      Cookies.set('jwt-token',jwtToken)
+      Cookies.set('jwt-token-admin',jwtToken)
       props.history.replace('/admin-edit-details')
     }
     else{
